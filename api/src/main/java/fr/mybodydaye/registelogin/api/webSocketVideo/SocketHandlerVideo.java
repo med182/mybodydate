@@ -1,4 +1,4 @@
-package fr.mybodydaye.registelogin.api.webSocketConfig;
+package fr.mybodydaye.registelogin.api.webSocketVideo;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class SocketHandler extends TextWebSocketHandler {
+public class SocketHandlerVideo extends TextWebSocketHandler {
 
     List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 

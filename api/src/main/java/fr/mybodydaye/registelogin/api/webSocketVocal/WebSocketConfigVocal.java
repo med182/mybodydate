@@ -1,4 +1,4 @@
-package fr.mybodydaye.registelogin.api.webSocketConfig;
+package fr.mybodydaye.registelogin.api.webSocketVocal;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -7,10 +7,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @Configuration
 @EnableWebSocket
-public class WebSocketConfigVideo implements WebSocketConfigurer {
+public class WebSocketConfigVocal implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new SocketHandler(), "/videochat").setAllowedOrigins("*");
+        registry.addHandler(new TwilioVocalStreamsHandler(), "/vocal").setAllowedOrigins("*");
+
     }
+
 }

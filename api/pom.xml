@@ -33,6 +33,14 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.twilio.sdk/twilio -->
+<dependency>
+    <groupId>com.twilio.sdk</groupId>
+    <artifactId>twilio</artifactId>
+    <version>9.14.1</version>
+</dependency>
+
+
 	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 <dependency>
