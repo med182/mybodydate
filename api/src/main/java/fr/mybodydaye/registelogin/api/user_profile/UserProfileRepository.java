@@ -1,4 +1,4 @@
-package fr.mybodydaye.registelogin.api.userProfile;
+package fr.mybodydaye.registelogin.api.user_profile;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

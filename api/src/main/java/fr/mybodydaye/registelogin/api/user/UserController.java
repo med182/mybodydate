@@ -1,3 +1,4 @@
+
 package fr.mybodydaye.registelogin.api.user;
 
 import java.util.HashMap;

@@ -1,11 +1,13 @@
-package fr.mybodydaye.registelogin.api.userProfile;
+package fr.mybodydaye.registelogin.api.user_profile;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+
 import javax.persistence.OneToOne;
 
 import fr.mybodydaye.registelogin.api.user.User;
@@ -64,12 +66,34 @@ public class UserProfile {
 
     private String imagePath;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userProfile")
     private User user;
 
     public UserProfile() {
 
+    }
+
+    public UserProfile(String city, String accessPosition, String gender, String dateOfBirth, String size,
+            String languages, String maritalStatus, String orientation, String searchPreference1,
+            String searchPreference2, String affinities, String lifestyle1, String lifestyle2, String firstName,
+            String pseudo, String imagePath, User user) {
+        this.city = city;
+        this.accessPosition = accessPosition;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.size = size;
+        this.languages = languages;
+        this.maritalStatus = maritalStatus;
+        this.orientation = orientation;
+        this.searchPreference1 = searchPreference1;
+        this.searchPreference2 = searchPreference2;
+        this.affinities = affinities;
+        this.lifestyle1 = lifestyle1;
+        this.lifestyle2 = lifestyle2;
+        this.firstName = firstName;
+        this.pseudo = pseudo;
+        this.imagePath = imagePath;
+        this.user = user;
     }
 
     public Long getId() {

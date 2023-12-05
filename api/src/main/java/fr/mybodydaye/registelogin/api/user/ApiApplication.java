@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "fr.mybodydaye.registelogin.api")
 @CrossOrigin
 @EnableWebSecurity
 public class ApiApplication {

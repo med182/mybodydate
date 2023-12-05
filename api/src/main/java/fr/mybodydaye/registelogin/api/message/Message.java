@@ -5,8 +5,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-
-import jakarta.persistence.Id;
+import javax.persistence.Id;
 
 @Entity
 public class Message {

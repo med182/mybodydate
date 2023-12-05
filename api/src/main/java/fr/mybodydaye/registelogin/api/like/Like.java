@@ -4,9 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import fr.mybodydaye.registelogin.api.user.User;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Like {

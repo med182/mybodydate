@@ -4,9 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,22 +17,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private CustomUserDetailsService userDetailsService;
+    protected CustomUserDetailsService userDetailsService;
 
     public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
+
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/register", "/api/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/messages").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/messages").authenticated()
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeRequests(auth -> {
+                    auth.antMatchers("/api/register", "/api/login").permitAll();
+                    auth.antMatchers(HttpMethod.GET, "/api/messages").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/messages").authenticated();
+                })
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
 
-        ).httpBasic(null);
-
-        return http.build();
+                .build();
     }
 
     @Bean

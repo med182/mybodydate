@@ -1,15 +1,18 @@
 package fr.mybodydaye.registelogin.api.user;
 
-import fr.mybodydaye.registelogin.api.userProfile.UserProfile;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import fr.mybodydaye.registelogin.api.user_profile.UserProfile;
 
 @Entity
 public class User {
@@ -30,7 +33,8 @@ public class User {
     @Pattern(regexp = "^\\+?\\d{10}$", message = "Numéro de téléphone invalide. Veuillez respecter le format \"+33 0 00 00 00\"")
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "up_id")
     private UserProfile userProfile;
 
     // Getters and setters
