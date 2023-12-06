@@ -16,7 +16,7 @@ import fr.mybodydaye.registelogin.api.user.User;
 public class UserProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = true)
