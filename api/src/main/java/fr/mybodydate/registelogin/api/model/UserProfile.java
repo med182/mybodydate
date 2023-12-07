@@ -1,4 +1,4 @@
-package fr.mybodydate.registelogin.api.user_profile;
+package fr.mybodydate.registelogin.api.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,10 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import javax.persistence.OneToOne;
-
-import fr.mybodydate.registelogin.api.user.User;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "user_profile")
 public class UserProfile {
 
     @Id

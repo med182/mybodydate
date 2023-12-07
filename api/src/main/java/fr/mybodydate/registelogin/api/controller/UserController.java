@@ -1,5 +1,5 @@
 
-package fr.mybodydate.registelogin.api.user;
+package fr.mybodydate.registelogin.api.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import fr.mybodydate.registelogin.api.model.User;
+import fr.mybodydate.registelogin.api.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api")

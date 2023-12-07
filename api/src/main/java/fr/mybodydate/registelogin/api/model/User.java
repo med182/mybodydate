@@ -1,4 +1,4 @@
-package fr.mybodydate.registelogin.api.user;
+package fr.mybodydate.registelogin.api.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,8 +12,6 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
-import fr.mybodydate.registelogin.api.user_profile.UserProfile;
 
 @Entity
 public class User {
@@ -42,6 +40,17 @@ public class User {
 
     public Integer getId() {
         return id;
+    }
+
+    public User(
+            @NotBlank(message = "L'adresse e-mail ne peut pas être vide") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Veuillez fournir une adresse e-mail valide") String email,
+            @NotBlank(message = "Le mot de passe ne peut pas être vide") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&?!])[A-Za-z\\d@#$%^&?!]{8,}$", message = "Le mot de passe doit contenir : au moins une lettre majuscule, au moins une lettre minuscule, au moins un chiffre, au moins un caractère spécial (@#$%^&?!), et au moins huit (8) caractères.") String password,
+            @NotBlank(message = "Le numéro de téléphone ne peut pas être vide") @Pattern(regexp = "^\\+?\\d{10}$", message = "Numéro de téléphone invalide. Veuillez respecter le format \"+33 0 00 00 00\"") String phoneNumber,
+            UserProfile userProfile) {
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.userProfile = userProfile;
     }
 
     public void setId(Integer id) {

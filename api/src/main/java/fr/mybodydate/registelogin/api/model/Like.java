@@ -1,12 +1,10 @@
-package fr.mybodydate.registelogin.api.like;
+package fr.mybodydate.registelogin.api.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import fr.mybodydate.registelogin.api.user.User;
 
 @Entity
 public class Like {

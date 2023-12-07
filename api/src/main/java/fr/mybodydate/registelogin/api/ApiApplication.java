@@ -1,11 +1,11 @@
-package fr.mybodydate.registelogin.api.user;
+package fr.mybodydate.registelogin.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@SpringBootApplication(scanBasePackages = "fr.mybodydaye.registelogin.api")
+@SpringBootApplication
 @CrossOrigin
 @EnableWebSecurity
 public class ApiApplication {

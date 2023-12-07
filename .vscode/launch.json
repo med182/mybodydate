@@ -2,6 +2,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "ApiApplication",
+      "request": "launch",
+      "mainClass": "fr.mybodydate.registelogin.api.user.ApiApplication",
+      "projectName": "api"
+    },
+    {
+      "type": "java",
       "name": "Spring Boot-ApiApplication<api>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -16,6 +23,27 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "mainClass": "fr.mybodydaye.registelogin.api.user.ApiApplication",
+      "projectName": "api",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52278 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=api"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ApiApplication<api>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "fr.mybodydate.registelogin.api.launch.ApiApplication",
+      "projectName": "api",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ApiApplication<api>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "fr.mybodydate.registelogin.api.ApiApplication",
       "projectName": "api",
       "args": "",
       "envFile": "${workspaceFolder}/.env"

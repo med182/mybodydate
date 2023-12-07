@@ -2,7 +2,7 @@ package fr.mybodydate.registelogin.api.services;
 
 import java.util.List;
 
-import fr.mybodydate.registelogin.api.like.Like;
+import fr.mybodydate.registelogin.api.model.Like;
 
 public interface ILikeService {
     List<Like> getReceivedLikes(Long userId);

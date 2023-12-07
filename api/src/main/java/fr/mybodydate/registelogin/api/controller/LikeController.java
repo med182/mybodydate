@@ -1,4 +1,4 @@
-package fr.mybodydate.registelogin.api.like;
+package fr.mybodydate.registelogin.api.controller;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.mybodydate.registelogin.api.model.Like;
 import fr.mybodydate.registelogin.api.services.LikeServiceImpl;
 
 @RestController

@@ -1,4 +1,4 @@
-package fr.mybodydate.registelogin.api.message;
+package fr.mybodydate.registelogin.api.model;
 
 import java.util.Date;
 
