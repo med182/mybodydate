@@ -2,12 +2,15 @@ package fr.mybodydate.registelogin.api.services;
 
 import java.io.FileInputStream;
 
+import org.springframework.stereotype.Service;
+
 import com.google.cloud.speech.v1.RecognitionAudio;
 import com.google.cloud.speech.v1.RecognitionConfig;
 import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.protobuf.ByteString;
 
+@Service
 public class SpeechRecognitionService {
 
     public String transcribeAudio(String filePath) throws Exception {
