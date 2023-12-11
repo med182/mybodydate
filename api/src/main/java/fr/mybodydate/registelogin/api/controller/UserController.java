@@ -22,6 +22,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import fr.mybodydate.registelogin.api.model.User;
 import fr.mybodydate.registelogin.api.repository.UserRepository;
+import fr.mybodydate.registelogin.api.services.TwilioOTPService;
 
 @RestController
 @RequestMapping("/api")
@@ -29,6 +30,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TwilioOTPService twilioOTPService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
