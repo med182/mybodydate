@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import javax.validation.constraints.Email;
@@ -36,7 +37,9 @@ public class User {
     @JoinColumn(name = "up_id")
     private UserProfile userProfile;
 
-    // Getters and setters
+    @ManyToOne
+    @JoinColumn(name = "subscription_id")
+    private Subscription subscription;
 
     public Integer getId() {
         return id;
@@ -46,11 +49,12 @@ public class User {
             @NotBlank(message = "L'adresse e-mail ne peut pas être vide") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Veuillez fournir une adresse e-mail valide") String email,
             @NotBlank(message = "Le mot de passe ne peut pas être vide") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&?!])[A-Za-z\\d@#$%^&?!]{8,}$", message = "Le mot de passe doit contenir : au moins une lettre majuscule, au moins une lettre minuscule, au moins un chiffre, au moins un caractère spécial (@#$%^&?!), et au moins huit (8) caractères.") String password,
             @NotBlank(message = "Le numéro de téléphone ne peut pas être vide") @Pattern(regexp = "^\\+?\\d{10}$", message = "Numéro de téléphone invalide. Veuillez respecter le format \"+33 0 00 00 00\"") String phoneNumber,
-            UserProfile userProfile) {
+            UserProfile userProfile, Subscription subsciption) {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.userProfile = userProfile;
+        this.subscription = subscription;
     }
 
     public void setId(Integer id) {
@@ -87,5 +91,13 @@ public class User {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subsciption) {
+        this.subscription = subsciption;
     }
 }

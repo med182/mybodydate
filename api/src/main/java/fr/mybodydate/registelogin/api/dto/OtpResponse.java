@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PasswordResetResponseDto {
+public class OtpResponse {
 
     private OtpStatus status;
     private String message;

@@ -11,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import fr.mybodydate.registelogin.api.dto.OtpRequest;
+import fr.mybodydate.registelogin.api.dto.OtpResponse;
+import fr.mybodydate.registelogin.api.dto.OtpStatus;
+import fr.mybodydate.registelogin.api.model.Subscription;
 import fr.mybodydate.registelogin.api.model.User;
 import fr.mybodydate.registelogin.api.repository.UserRepository;
 import fr.mybodydate.registelogin.api.services.TwilioOTPService;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api")
@@ -51,8 +57,51 @@ public class UserController {
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
-        userRepository.save(user);
-        return new ResponseEntity<>("Utilisateur enregistré avec succès.", HttpStatus.OK);
+        OtpRequest otpRequest = new OtpRequest();
+        otpRequest.setPhoneNumber(user.getPhoneNumber());
+
+        OtpResponse otpResponse = twilioOTPService.sendOTP(otpRequest).block();
+
+        if (otpResponse != null && otpResponse.getStatus() == OtpStatus.DELIVRED) {
+            userRepository.save(user);
+            return new ResponseEntity<>("Utilisateur enregistré avec succès.", HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>("Erreur lors de l'envoi de l'OTP de confirmation.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody OtpRequest otpRequest) {
+        try {
+            String userInputOtp = otpRequest.getOtp();
+            String newPassword = otpRequest.getNewPassword();
+
+            // Valider l'OTP pour la réinitialisation du mot de passe
+            Mono<String> otpValidationResult = twilioOTPService.validatePasswordResetOTP(userInputOtp, otpRequest);
+
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            otpValidationResult.block(); // Blocage pour attendre le résultat de la validation OTP
+
+            // Mettez à jour le mot de passe de l'utilisateur
+            User user = userRepository.findByEmailOrPhoneNumber(key, key);
+            if (user != null) {
+                String hashedPassword = passwordEncoder.encode(newPassword);
+                user.setPassword(hashedPassword);
+                userRepository.save(user);
+
+                return new ResponseEntity<>("Mot de passe réinitialisé avec succès.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Utilisateur non trouvé.", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Erreur lors de la réinitialisation du mot de passe.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @PostMapping("/login")
@@ -173,6 +222,18 @@ public class UserController {
                 .block();
 
         return new ResponseEntity<>(userInfo, HttpStatus.OK);
+    }
+
+    @GetMapping("/subscriptions/{userId}")
+    public ResponseEntity<?> getUserSubscriptions(@PathVariable Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            Subscription subscription = user.getSubscription();
+            return new ResponseEntity<>(subscription, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Utilisateur non trouvé.", HttpStatus.NOT_FOUND);
+        }
     }
 
 }

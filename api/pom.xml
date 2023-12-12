@@ -58,11 +58,14 @@
 </dependency>
 
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.30</version>
+    <scope>provided</scope>
+</dependency>
+
 		<dependency>
     <groupId>javax.validation</groupId>
     <artifactId>validation-api</artifactId>
@@ -73,6 +76,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+    <groupId>com.stripe</groupId>
+    <artifactId>stripe-java</artifactId>
+    <version>20.95.0</version>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-speech -->
 <dependency>
     <groupId>com.google.cloud</groupId>

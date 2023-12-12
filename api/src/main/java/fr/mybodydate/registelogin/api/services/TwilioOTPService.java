@@ -2,6 +2,7 @@ package fr.mybodydate.registelogin.api.services;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,8 @@ import com.twilio.type.PhoneNumber;
 
 import fr.mybodydate.registelogin.api.config.TwilioConfig;
 import fr.mybodydate.registelogin.api.dto.OtpStatus;
-import fr.mybodydate.registelogin.api.dto.PasswordResetRequestDto;
-import fr.mybodydate.registelogin.api.dto.PasswordResetResponseDto;
+import fr.mybodydate.registelogin.api.dto.OtpRequest;
+import fr.mybodydate.registelogin.api.dto.OtpResponse;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -22,44 +23,75 @@ public class TwilioOTPService {
     @Autowired
     private TwilioConfig twilioConfig;
 
-    java.util.Map<String, String> optMap = new HashMap<>();
+    private final Map<String, String> optMap = new HashMap<>();
 
-    public Mono<PasswordResetResponseDto> sendOTPForPasswordReset(PasswordResetRequestDto passwordResetRequestDto) {
+    public Mono<OtpResponse> sendOTP(OtpRequest otpRequest) {
 
-        PasswordResetResponseDto passwordResetResponseDto = null;
         try {
-            PhoneNumber to = new PhoneNumber(passwordResetRequestDto.getPhoneNumber());
+            PhoneNumber to = new PhoneNumber(otpRequest.getPhoneNumber());
             PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
 
             String otp = generateOTP();
-            String otpMessage = "Dear Customer, Your OTP is ##" +
-                    otp + "##. Use this Passcode to complete your transaction. Thank you! ";
-            Message message = Message
-                    .creator(to, from,
-                            otpMessage)
+            String otpMessage = "Votre code de vérification MyBodyDate est : " + otp;
 
-                    .create();
-            optMap.put(passwordResetRequestDto.getUsername(), otp);
-            passwordResetResponseDto = new PasswordResetResponseDto(OtpStatus.DELIVRED, otpMessage);
+            Message message = Message.creator(to, from, otpMessage).create();
+
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            optMap.put(key, otp);
+            return Mono.just(new OtpResponse(OtpStatus.DELIVRED, "Code OTP envoyé avec succès."));
         } catch (Exception ex) {
-            passwordResetResponseDto = new PasswordResetResponseDto(OtpStatus.FAILED, ex.getMessage());
+            return Mono.just(new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP."));
         }
-        return Mono.just(passwordResetResponseDto);
+
     }
 
-    public Mono<String> validateOTP(String userInputOtp, String username) {
-        if (userInputOtp.equals(optMap.get(username))) {
-            optMap.remove(username, userInputOtp);
-            return Mono.just("Valid OTP please proceed with your transaction !");
+    public Mono<String> validateOTP(String userInputOtp, OtpRequest otpRequest) {
+        String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+        if (userInputOtp.equals(optMap.get(key))) {
+
+            optMap.remove(key);
+            return Mono.just("Code OTP valide. Vous pouvez procéder.");
         } else {
-            return Mono.error(new IllegalArgumentException("Invalid otp please retry"));
+            return Mono.error(new IllegalArgumentException("Code OTP invalide. Veuillez réessayer."));
+        }
+    }
+
+    public Mono<OtpResponse> sendPasswordResetOTP(OtpRequest otpRequest) {
+        try {
+            PhoneNumber to = new PhoneNumber(otpRequest.getPhoneNumber());
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+
+            String otp = generateOTP();
+            String otpMessage = "Votre code de réinitialisation de mot de passe MyBodyDate est : " + otp;
+
+            Message message = Message.creator(to, from, otpMessage).create();
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            optMap.put(key + "_reset", otp);
+            return Mono.just(new OtpResponse(OtpStatus.DELIVRED, "Code OTP de réinitialisation envoyé avec succès."));
+
+        } catch (Exception e) {
+            return Mono.just(new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP de réinitialisation."));
+        }
+    }
+
+    public Mono<String> validatePasswordResetOTP(String userInputOtp, OtpRequest otpRequest) {
+        String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+        key += "_reset";
+
+        if (userInputOtp.equals(optMap.get(key))) {
+            optMap.remove(key);
+            return Mono.just(
+                    "Code OTP de réinitialisation valide. Vous pouvez procéder à la réinitialisation du mot de passe.");
+        } else {
+            return Mono
+                    .error(new IllegalArgumentException("Code OTP de réinitialisation invalide. Veuillez réessayer."));
         }
     }
 
     private String generateOTP() {
-        return new DecimalFormat()
-
-                .format(new Random().nextInt(999999));
+        return String.valueOf(new Random().nextInt(999999));
     }
 
 }
