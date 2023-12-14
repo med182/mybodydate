@@ -1,5 +1,8 @@
 package fr.mybodydate.registelogin.api.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -41,9 +45,8 @@ public class User {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
-    public Integer getId() {
-        return id;
-    }
+    @ManyToMany(mappedBy = "users")
+    private Set<Match> matches = new HashSet<>();
 
     public User(
             @NotBlank(message = "L'adresse e-mail ne peut pas être vide") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Veuillez fournir une adresse e-mail valide") String email,
@@ -54,7 +57,11 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.userProfile = userProfile;
-        this.subscription = subscription;
+
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {
@@ -97,7 +104,15 @@ public class User {
         return subscription;
     }
 
-    public void setSubscription(Subscription subsciption) {
-        this.subscription = subsciption;
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
+
+    public Set<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(Set<Match> matches) {
+        this.matches = matches;
     }
 }
