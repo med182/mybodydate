@@ -94,4 +94,18 @@ public class TwilioOTPService {
         return String.valueOf(new Random().nextInt(999999));
     }
 
+    public Mono<Void> sendRecoveryCodeBySMS(String phoneNumber, String recoveryCode) {
+        try {
+            PhoneNumber to = new PhoneNumber(phoneNumber);
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+
+            String recoveryMessage = "Your MyBodyDate recovery code is: " + recoveryCode;
+
+            Message.creator(to, from, recoveryMessage).create();
+
+            return Mono.empty(); // Return an empty Mono since there is no specific result to return
+        } catch (Exception ex) {
+            return Mono.error(ex); // Return an error Mono in case of failure
+        }
+    }
 }

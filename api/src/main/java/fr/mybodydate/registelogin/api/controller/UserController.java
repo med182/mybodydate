@@ -3,6 +3,7 @@ package fr.mybodydate.registelogin.api.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -236,4 +237,45 @@ public class UserController {
         }
     }
 
+    @PostMapping("/recover-account")
+    public ResponseEntity<?> recoverAccount(@RequestBody OtpRequest otpRequest) {
+
+        try {
+            String phoneNumber = otpRequest.getPhoneNumber();
+            User user = userRepository.findByEmailOrPhoneNumber(phoneNumber, phoneNumber);
+            if (user == null) {
+                return new ResponseEntity<>("Utilisateur non trouvé.",
+                        HttpStatus.NOT_FOUND);
+            }
+            String recoveryCode = generateRecoveryCode(user);
+            sendRecoveryCodeBySMS(phoneNumber, recoveryCode);
+            return ResponseEntity.ok("Code de récupération envoyé avec succès");
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erreur lors de la récupération du compte.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    private String generateRecoveryCode(User user) {
+
+        Random random = new Random();
+        int recoveryCodeInt = 100000 + random.nextInt(900000); // Génère un nombre aléatoire entre 100000 et 999999
+        String recoveryCode = String.valueOf(recoveryCodeInt);
+
+        user.setRecoveryCode(recoveryCode);
+        userRepository.save(user);
+
+        return recoveryCode;
+    }
+
+    private void sendRecoveryCodeBySMS(String phoneNumber, String recoveryCode) {
+
+        twilioOTPService.sendRecoveryCodeBySMS(phoneNumber, recoveryCode)
+                .doOnError(error -> {
+                    System.err.println("Error sending recovery code by SMS :"
+                            + error.getMessage());
+                })
+                .subscribe();
+    }
 }
