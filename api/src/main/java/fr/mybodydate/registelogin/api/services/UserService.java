@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 
 import fr.mybodydate.registelogin.api.model.Subscription;
 import fr.mybodydate.registelogin.api.model.User;
-import fr.mybodydate.registelogin.api.repository.UserRepository;
+import fr.mybodydate.registelogin.api.repository.IUserRepository;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private IUserRepository userRepository;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElse(null);

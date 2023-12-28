@@ -108,4 +108,24 @@ public class TwilioOTPService {
             return Mono.error(ex); // Return an error Mono in case of failure
         }
     }
+
+    public Mono<OtpResponse> sendAccountDeleteOtp(OtpRequest otpRequest) {
+        try {
+            PhoneNumber to = new PhoneNumber(otpRequest.getPhoneNumber());
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+
+            String otp = generateOTP();
+            String otpMessage = "Votre code de suppression de compte MyBodyDate : " + otp;
+
+            Message.creator(to, from, otpMessage).create();
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            optMap.put(key + "_delete_account", otp);
+            return Mono
+                    .just(new OtpResponse(OtpStatus.DELIVRED, "Code OTP de suppression de compte envoyé avec succès."));
+
+        } catch (Exception e) {
+            return Mono.just((new OtpResponse(OtpStatus.FAILED, "Echec de l'envoi de l'OTP de suppression de compte")));
+        }
+    }
 }

@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.mybodydate.registelogin.api.model.UserProfile;
-import fr.mybodydate.registelogin.api.repository.UserProfileRepository;
+import fr.mybodydate.registelogin.api.repository.IUserProfileRepository;
 
 @RestController
 @RequestMapping("/api")
 public class UserProfileController {
 
     @Autowired
-    private UserProfileRepository UserProfileRepository;
+    private IUserProfileRepository UserProfileRepository;
 
     @PostMapping("/saveUserProfile")
     public UserProfile saveUserProfile(@RequestBody UserProfile userProfile) {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 
@@ -12,6 +13,9 @@ public class StripePayementService {
 
     @Value("${stripe.publishableKey}")
     private String publishableKey;
+
+    @Value("${stripe.secretKey}")
+    private String secretKey;
 
     public String createCheckoutSession() {
         try {
@@ -34,6 +38,19 @@ public class StripePayementService {
 
     public String getPublishableKey() {
         return publishableKey;
+    }
+
+    public boolean processPayment(String checkoutSessionId) {
+        try {
+            Stripe.apiKey = secretKey;
+            Session session = Session.retrieve(checkoutSessionId);
+            String paymentStatus = session.getPaymentStatus();
+
+            return "paid".equals(paymentStatus);
+        } catch (StripeException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

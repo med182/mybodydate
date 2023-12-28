@@ -7,13 +7,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import fr.mybodydate.registelogin.api.model.Message;
-import fr.mybodydate.registelogin.api.repository.MessageRepository;
+import fr.mybodydate.registelogin.api.repository.IMessageRepository;
 
 @Service
 public class MessageService {
 
     @Autowired
-    private MessageRepository messageRepository;
+    private IMessageRepository messageRepository;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;

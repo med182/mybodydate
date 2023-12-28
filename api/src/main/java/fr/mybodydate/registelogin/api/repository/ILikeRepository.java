@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import fr.mybodydate.registelogin.api.model.Like;
 
 @Repository
-public interface LikeRepository extends JpaRepository<Like, Long> {
+public interface ILikeRepository extends JpaRepository<Like, Long> {
 
     List<Like> findByReceiverUserId(Long userId);
 

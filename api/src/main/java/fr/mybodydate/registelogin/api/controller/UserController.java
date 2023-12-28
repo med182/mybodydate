@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ import fr.mybodydate.registelogin.api.dto.OtpResponse;
 import fr.mybodydate.registelogin.api.dto.OtpStatus;
 import fr.mybodydate.registelogin.api.model.Subscription;
 import fr.mybodydate.registelogin.api.model.User;
-import fr.mybodydate.registelogin.api.repository.UserRepository;
+import fr.mybodydate.registelogin.api.repository.IUserRepository;
 import fr.mybodydate.registelogin.api.services.TwilioOTPService;
 import reactor.core.publisher.Mono;
 
@@ -36,7 +37,7 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private IUserRepository userRepository;
 
     @Autowired
     private TwilioOTPService twilioOTPService;
@@ -277,5 +278,33 @@ public class UserController {
                             + error.getMessage());
                 })
                 .subscribe();
+    }
+
+    @DeleteMapping("/delete-account/{userId}")
+    public ResponseEntity<?> deleteAccount(@PathVariable Integer userId, @RequestBody OtpRequest otpRequest) {
+
+        try {
+            User user = userRepository.findById(userId).orElse(null);
+
+            if (user == null) {
+                return new ResponseEntity<>("Utilisateur non trouvé", HttpStatus.NOT_FOUND);
+            }
+
+            OtpResponse otpResponse = twilioOTPService.sendAccountDeleteOtp(otpRequest).block();
+
+            if (otpResponse != null && otpResponse.getStatus() == OtpStatus.DELIVRED) {
+                userRepository.delete(user);
+                return new ResponseEntity<>("Compte utilisateur supprimé avec succès", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Code de validation incorrect.", HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+
+            return new ResponseEntity<>("Erreur lors de la suppression de compte utilisateur.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
     }
 }

@@ -10,17 +10,17 @@ import org.springframework.stereotype.Service;
 
 import fr.mybodydate.registelogin.api.model.Match;
 import fr.mybodydate.registelogin.api.model.User;
-import fr.mybodydate.registelogin.api.repository.MatchRepository;
-import fr.mybodydate.registelogin.api.repository.UserRepository;
+import fr.mybodydate.registelogin.api.repository.IMatchRepository;
+import fr.mybodydate.registelogin.api.repository.IUserRepository;
 
 @Service
 public class MatchService {
 
     @Autowired
-    private UserRepository userRepository;
+    private IUserRepository userRepository;
 
     @Autowired
-    private MatchRepository matchRepository;
+    private IMatchRepository matchRepository;
 
     public ResponseEntity<?> requestMatch(Integer userId, Integer targetUserId) {
         try {

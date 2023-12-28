@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import fr.mybodydate.registelogin.api.model.Subscription;
 
-public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
+public interface ISubscriptionRepository extends JpaRepository<Subscription, Long> {
 
 }

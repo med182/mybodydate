@@ -1,6 +1,7 @@
 package fr.mybodydate.registelogin.api.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -20,6 +21,8 @@ public class Subscription {
     private BigDecimal cost;
     private int durationMonths;
     private boolean active;
+    private LocalDate startDate; // Date de début de l'abonnement
+    private LocalDate endDate; // Date de fin de l'abonnement
 
     @OneToMany(mappedBy = "subscription")
     private List<User> users;
@@ -62,5 +65,21 @@ public class Subscription {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

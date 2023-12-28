@@ -5,14 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.mybodydate.registelogin.api.repository.SubscriptionRepository;
+import fr.mybodydate.registelogin.api.repository.ISubscriptionRepository;
 import fr.mybodydate.registelogin.api.model.Subscription;
 
 @Service
 public class SubscriptionService {
 
     @Autowired
-    private SubscriptionRepository subscriptionRepository;
+    private ISubscriptionRepository subscriptionRepository;
 
     public List<Subscription> getAllSubscriptions() {
         return subscriptionRepository.findAll();
