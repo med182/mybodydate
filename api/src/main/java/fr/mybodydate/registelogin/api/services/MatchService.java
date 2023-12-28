@@ -36,6 +36,10 @@ public class MatchService {
                 return new ResponseEntity<>("Impossible de se matcher avec soi-même.", HttpStatus.BAD_REQUEST);
             }
 
+            if (user.getBlockedContacts().contains(targetUser)) {
+                return new ResponseEntity<>("L'utilisateur est bloqué", HttpStatus.BAD_REQUEST);
+            }
+
             // Check if the users are already matched
             Set<User> existingMatches = matchRepository.findUsersByMatchId(user.getId());
             if (existingMatches.contains(targetUser)) {

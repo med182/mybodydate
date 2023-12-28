@@ -31,6 +31,12 @@ public class SecurityConfiguration {
                     auth.antMatchers("/api/register", "/api/login").permitAll();
                     auth.antMatchers(HttpMethod.GET, "/api/messages").authenticated();
                     auth.antMatchers(HttpMethod.POST, "/api/messages").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/matches").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/purchase").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/subscriptions").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/messages").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/likes").authenticated();
+                    auth.antMatchers(HttpMethod.POST, "/api/payment").authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())

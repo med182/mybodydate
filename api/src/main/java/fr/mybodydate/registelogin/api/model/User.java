@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -21,7 +22,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -57,20 +63,29 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Purchase> purchases;
 
-    public User(
-            @NotBlank(message = "L'adresse e-mail ne peut pas être vide") @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$", message = "Veuillez fournir une adresse e-mail valide") String email,
-            @NotBlank(message = "Le mot de passe ne peut pas être vide") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&?!])[A-Za-z\\d@#$%^&?!]{8,}$", message = "Le mot de passe doit contenir : au moins une lettre majuscule, au moins une lettre minuscule, au moins un chiffre, au moins un caractère spécial (@#$%^&?!), et au moins huit (8) caractères.") String password,
-            @NotBlank(message = "Le numéro de téléphone ne peut pas être vide") @Pattern(regexp = "^\\+?\\d{10}$", message = "Numéro de téléphone invalide. Veuillez respecter le format \"+33 0 00 00 00\"") String phoneNumber,
-            UserProfile userProfile, Subscription subsciption) {
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.userProfile = userProfile;
+    @ManyToMany
+    @JoinTable(name = "user_blocked_contacts", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "blocked_contact_id"))
 
-    }
+    private Set<User> blockedContacts = new HashSet<>();
 
     public Integer getId() {
         return id;
+    }
+
+    public List<Purchase> getPurchases() {
+        return purchases;
+    }
+
+    public void setPurchases(List<Purchase> purchases) {
+        this.purchases = purchases;
+    }
+
+    public Set<User> getBlockedContacts() {
+        return blockedContacts;
+    }
+
+    public void setBlockedContacts(Set<User> blockedContacts) {
+        this.blockedContacts = blockedContacts;
     }
 
     public void setId(Integer id) {
