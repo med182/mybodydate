@@ -1,0 +1,135 @@
+package fr.mybodydate.api.services;
+
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
+import com.twilio.type.PhoneNumber;
+
+import fr.mybodydate.api.config.TwilioConfig;
+import fr.mybodydate.api.dto.OtpStatus;
+import fr.mybodydate.api.dto.OtpRequest;
+import fr.mybodydate.api.dto.OtpResponse;
+import reactor.core.publisher.Mono;
+
+@Service
+public class TwilioOTPService {
+
+    @Autowired
+    private TwilioConfig twilioConfig;
+
+    private final Map<String, String> optMap = new HashMap<>();
+    
+    @PostConstruct
+    public void init() {
+        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
+    }
+
+    public Mono<OtpResponse> sendOTP(OtpRequest otpRequest) {
+
+        try {
+            PhoneNumber to = new PhoneNumber(otpRequest.getPhoneNumber());
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+
+            String otp = generateOTP();
+            String otpMessage = "Votre code de vérification MyBodyDate est : " + otp;
+
+            Message message = Message.creator(to, from, otpMessage).create();
+
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            optMap.put(key, otp);
+            return Mono.just(new OtpResponse(OtpStatus.DELIVERED, "Code OTP envoyé avec succès."));
+        } catch (Exception ex) {
+            return Mono.just(new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP."));
+        }
+
+    }
+
+    public Mono<String> validateOTP(String userInputOtp, OtpRequest otpRequest) {
+        String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+        if (userInputOtp.equals(optMap.get(key))) {
+
+            optMap.remove(key);
+            return Mono.just("Code OTP valide. Vous pouvez procéder.");
+        } else {
+            return Mono.error(new IllegalArgumentException("Code OTP invalide. Veuillez réessayer."));
+        }
+    }
+
+    public Mono<OtpResponse> sendPasswordResetOTP(OtpRequest otpRequest) {
+        try {
+            PhoneNumber to = new PhoneNumber(otpRequest.getPhoneNumber());
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+
+            String otp = generateOTP();
+            String otpMessage = "Votre code de réinitialisation de mot de passe MyBodyDate est : " + otp;
+
+            Message message = Message.creator(to, from, otpMessage).create();
+            String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+
+            optMap.put(key + "_reset", otp);
+            return Mono.just(new OtpResponse(OtpStatus.DELIVERED, "Code OTP de réinitialisation envoyé avec succès."));
+
+        } catch (Exception e) {
+            return Mono.just(new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP de réinitialisation."));
+        }
+    }
+
+    public Mono<String> validatePasswordResetOTP(String userInputOtp, OtpRequest otpRequest) {
+        String key = otpRequest.getEmail() != null ? otpRequest.getEmail() : otpRequest.getPhoneNumber();
+        key += "_reset";
+
+        if (userInputOtp.equals(optMap.get(key))) {
+            optMap.remove(key);
+            return Mono.just(
+                    "Code OTP de réinitialisation valide. Vous pouvez procéder à la réinitialisation du mot de passe.");
+        } else {
+            return Mono
+                    .error(new IllegalArgumentException("Code OTP de réinitialisation invalide. Veuillez réessayer."));
+        }
+    }
+    
+    public OtpResponse verificationNumero(OtpRequest otpRequest) {
+        Verification verification = Verification.creator(
+            twilioConfig.getVerificationSid(),
+            otpRequest.getPhoneNumber(),
+            "sms") // Le canal à utiliser pour envoyer le code de vérification
+            .create();
+
+        if (verification.getStatus().equals("pending")) {
+            return new OtpResponse(OtpStatus.DELIVERED, "Code OTP envoyé avec succès.");
+        } else {
+            return new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP.");
+        }
+    }
+    
+    public OtpResponse verificationCheck(OtpRequest otpRequest) {
+        VerificationCheck verificationCheck = VerificationCheck.creator(twilioConfig.getVerificationSid())
+            .setTo(otpRequest.getPhoneNumber())
+            .setCode(otpRequest.getCode())
+            .create();
+
+        if (verificationCheck.getStatus().equals("approved")) {
+            return new OtpResponse(OtpStatus.VALID, "Code OTP valide. Vous pouvez procéder.");
+        } else {
+            return new OtpResponse(OtpStatus.INVALID, "Code OTP invalide. Veuillez réessayer.");
+        }
+    }
+
+
+    private String generateOTP() {
+        return String.valueOf(new Random().nextInt(999999));
+    }
+
+}
