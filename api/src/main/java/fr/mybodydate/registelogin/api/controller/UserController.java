@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.google.rpc.context.AttributeContext.Response;
+
 import fr.mybodydate.registelogin.api.dto.OtpRequest;
 import fr.mybodydate.registelogin.api.dto.OtpResponse;
 import fr.mybodydate.registelogin.api.dto.OtpStatus;
@@ -30,11 +32,15 @@ import fr.mybodydate.registelogin.api.model.Subscription;
 import fr.mybodydate.registelogin.api.model.User;
 import fr.mybodydate.registelogin.api.repository.IUserRepository;
 import fr.mybodydate.registelogin.api.services.TwilioOTPService;
+import fr.mybodydate.registelogin.api.services.UserService;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private IUserRepository userRepository;
@@ -43,6 +49,21 @@ public class UserController {
     private TwilioOTPService twilioOTPService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @PostMapping("/start-registration")
+    public ResponseEntity<?> startRegistration(@RequestBody Map<String, String> requestData) {
+        try {
+            String email = requestData.get("email");
+            String phoneNumber = requestData.get("phoneNumber");
+            String temporaryUserId = userService.startUserRegistration(email, phoneNumber);
+
+            return ResponseEntity.ok("Inscription temporaire commencée. Identifiant temporaire : " + temporaryUserId);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erreur lors du démarrage de l'inscription temporaire.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {

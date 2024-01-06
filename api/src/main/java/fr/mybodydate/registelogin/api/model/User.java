@@ -34,6 +34,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "temporary_user_id")
+    private String temporaryUserId;
+
     public List<Reservation> getReservations() {
         return reservations;
     }
@@ -157,5 +160,13 @@ public class User {
 
     public void setRecoveryCode(String recoveryCode) {
         this.recoveryCode = recoveryCode;
+    }
+
+    public String getTemporaryUserId() {
+        return temporaryUserId;
+    }
+
+    public void setTemporaryUserId(String temporaryUserId) {
+        this.temporaryUserId = temporaryUserId;
     }
 }

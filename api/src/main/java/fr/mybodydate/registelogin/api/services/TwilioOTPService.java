@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.type.PhoneNumber;
 
 import fr.mybodydate.registelogin.api.config.TwilioConfig;
@@ -44,6 +45,20 @@ public class TwilioOTPService {
             return Mono.just(new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP."));
         }
 
+    }
+
+    public OtpResponse verificationNumero(OtpRequest otpRequest) {
+        Verification verification = Verification.creator(
+                twilioConfig.getAccountSid(),
+                otpRequest.getPhoneNumber(),
+                "sms") // Le canal à utiliser pour envoyer le code de vérification
+                .create();
+
+        if (verification.getStatus().equals("pending")) {
+            return new OtpResponse(OtpStatus.DELIVRED, "Code OTP envoyé avec succès.");
+        } else {
+            return new OtpResponse(OtpStatus.FAILED, "Échec de l'envoi de l'OTP.");
+        }
     }
 
     public Mono<String> validateOTP(String userInputOtp, OtpRequest otpRequest) {
