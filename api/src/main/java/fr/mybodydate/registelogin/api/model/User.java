@@ -74,6 +74,14 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private Set<Match> matches = new HashSet<>();
 
+    public Set<Match> getBlacklistedMatches() {
+        return blacklistedMatches;
+    }
+
+    public void setBlacklistedMatches(Set<Match> blacklistedMatches) {
+        this.blacklistedMatches = blacklistedMatches;
+    }
+
     @OneToMany(mappedBy = "user")
     private List<Purchase> purchases;
 
@@ -81,6 +89,10 @@ public class User {
     @JoinTable(name = "user_blocked_contacts", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "blocked_contact_id"))
 
     private Set<User> blockedContacts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "users")
+    @JoinTable(name = "user_blacklisted_matches", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "blacklisted_match_id"))
+    private Set<Match> blacklistedMatches = new HashSet<>();
 
     public Integer getId() {
         return id;

@@ -117,6 +117,37 @@ public class MatchService {
         }
     }
 
-    // Add other match-related methods if needed
+    public ResponseEntity<?> addToBlacklist(Integer userId, Long matchId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Match match = matchRepository.findById(matchId).orElse(null);
+
+        if (user != null && match != null) {
+            if (!user.getBlacklistedMatches().contains(match)) {
+                user.getBlacklistedMatches().contains(match);
+                userRepository.save(user);
+                return new ResponseEntity<>("Match ajouté à la liste noire avec succès. ", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Le match est déjà dans la liste noire.", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("Utilisateur ou match non trouvé.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<?> removeFromBlacklist(Integer userId, Long matchId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Match match = matchRepository.findById(matchId).orElse(null);
+
+        if (user != null && match != null) {
+            if (user.getBlacklistedMatches().contains(match)) {
+                user.getBlacklistedMatches().remove(match);
+                return new ResponseEntity<>("Match supprimé de la liste noire avec succès.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Le match n'est pas dans la liste noire", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("Utilisateur ou match non trouvé.", HttpStatus.NOT_FOUND);
+        }
+    }
 
 }

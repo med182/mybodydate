@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.mybodydate.registelogin.api.model.Match;
+import fr.mybodydate.registelogin.api.model.User;
 import fr.mybodydate.registelogin.api.services.MatchService;
+import fr.mybodydate.registelogin.api.services.UserService;
 
 @RestController
 @RequestMapping("/api/matches")
@@ -25,6 +28,9 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/createMatch")
     public ResponseEntity<?> createMatch(@RequestBody Map<String, Integer> request) {
@@ -55,4 +61,59 @@ public class MatchController {
     public ResponseEntity<?> deleteMatch(@PathVariable Long matchId) {
         return matchService.deleteMatch(matchId);
     }
+
+    @PostMapping("/addToBlacklist")
+    public ResponseEntity<?> addToBlacklist(@RequestBody Map<String, Object> request) {
+
+        Integer userId = ((Number) request.get("userId")).intValue();
+        Long matchId = ((Number) request.get("matchId")).longValue();
+
+        ResponseEntity<?> response = matchService.addToBlacklist(userId, matchId);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            User user = userService.getUserById(userId);
+            if (user != null) {
+                ResponseEntity<?> matchResponse = matchService.getMatchById(matchId);
+
+                if (matchResponse.getStatusCode() == HttpStatus.OK) {
+                    Match blacklistedMatch = (Match) matchResponse.getBody();
+                    if (blacklistedMatch != null) {
+                        user.getBlacklistedMatches().add(blacklistedMatch);
+                        userService.createUser(user);
+                    }
+                }
+            }
+
+        }
+        return response;
+    }
+
+    @PostMapping("/removeFromBlacklist")
+    public ResponseEntity<?> removeFromBlacklist(@RequestBody Map<String, Object> request) {
+
+        Integer userId = ((Number) request.get("userId")).intValue();
+        Long matchId = ((Number) request.get("matchId")).longValue();
+
+        ResponseEntity<?> response = matchService.removeFromBlacklist(userId, matchId);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            User user = userService.getUserById(userId);
+            if (user != null) {
+                ResponseEntity<?> matchResponse = matchService.getMatchById(matchId);
+
+                if (matchResponse.getStatusCode() == HttpStatus.OK) {
+                    Match blacklistedMatch = (Match) matchResponse.getBody();
+                    if (blacklistedMatch != null) {
+                        user.getBlacklistedMatches().remove(blacklistedMatch);
+                        userService.createUser(user);
+                    }
+                }
+
+            }
+
+        }
+        return response;
+
+    }
+
 }
