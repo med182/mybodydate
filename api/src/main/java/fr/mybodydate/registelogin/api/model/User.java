@@ -48,6 +48,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
 
+    @OneToOne(mappedBy = "user")
+    private TrialPeriode trialPeriod;
+
     @Column(name = "recovery_code")
     private String recoveryCode;
 
