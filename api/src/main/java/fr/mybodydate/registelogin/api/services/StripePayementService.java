@@ -14,7 +14,7 @@ public class StripePayementService {
     @Value("${stripe.publishableKey}")
     private String publishableKey;
 
-    @Value("${stripe.secretKey}")
+    @Value("${stripe.apiKey.secret}")
     private String secretKey;
 
     public String createCheckoutSession() {

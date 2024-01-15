@@ -90,8 +90,7 @@ public class User {
 
     private Set<User> blockedContacts = new HashSet<>();
 
-    @ManyToMany(mappedBy = "users")
-    @JoinTable(name = "user_blacklisted_matches", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "blacklisted_match_id"))
+    @ManyToMany
     private Set<Match> blacklistedMatches = new HashSet<>();
 
     public Integer getId() {

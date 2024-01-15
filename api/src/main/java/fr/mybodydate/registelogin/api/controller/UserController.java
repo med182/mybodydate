@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.google.rpc.context.AttributeContext.Response;
-
 import fr.mybodydate.registelogin.api.dto.OtpRequest;
 import fr.mybodydate.registelogin.api.dto.OtpResponse;
 import fr.mybodydate.registelogin.api.dto.OtpStatus;
